@@ -1,51 +1,65 @@
 import clips
 import tkinter as tk
+from tkinter import messagebox
 
-def run_clips_system():
+def run_diabetes_expert_system(age, glucose_level):
     # Crear un entorno CLIPS
     env = clips.Environment()
 
     # Definir hechos
-    fact1 = env.assert_string('(ordered-fact 1 2 3)')
-    fact2 = env.assert_string('(ordered-fact 3 2 1)')
+    env.assert_string(f'(patient (age {age}) (glucose-level {glucose_level}) (diabetes-detected FALSE))')
 
-    # Definir regla
-    env.build('(defrule ordered-fact-rule '
-              '(ordered-fact ?a ?b ?c) '
-              '(test (> ?a ?b)) '
+    # Definir reglas
+    env.build('(defrule diabetes-rule '
+              '(patient (age ?a) (glucose-level ?g&:(>= ?g 140)) (diabetes-detected FALSE)) '
               '=> '
-              '(printout t "Los elementos no están en orden ascendente." crlf))')
+              '(assert (diabetes-detected TRUE)))')
 
     # Ejecutar el sistema experto
     env.run()
 
-    # Acceder a los datos de los hechos
-    print(f'Fact1: {list(fact1)}')
-    print(f'Fact2: {list(fact2)}')
+    # Verificar si se detectó la diabetes
+    return bool(env.find_fact('(diabetes-detected TRUE)'))
 
-def main():
-    # Crear una ventana principal de Tkinter
-    root = tk.Tk()
-    root.title("Sistema Experto con Tkinter")
+def on_submit():
+    age = age_entry.get()
+    glucose_level = glucose_entry.get()
 
-    # Botón para ejecutar el sistema experto
-    run_button = tk.Button(root, text="Ejecutar Sistema Experto", command=run_clips_system)
-    run_button.pack(pady=10)
+    try:
+        age = int(age)
+        glucose_level = int(glucose_level)
 
-    # Etiqueta para mostrar resultados (puedes adaptarlo según tus necesidades)
-    result_label = tk.Label(root, text="")
-    result_label.pack(pady=10)
+        diabetes_detected = run_diabetes_expert_system(age, glucose_level)
 
-    # Función para actualizar la etiqueta de resultados
-    def update_result_label():
-        result_label.config(text="¡Sistema experto ejecutado!")
+        if diabetes_detected:
+            messagebox.showinfo("Resultado", "Se ha detectado diabetes.")
+        else:
+            messagebox.showinfo("Resultado", "No se ha detectado diabetes.")
 
-    # Botón para actualizar la etiqueta de resultados
-    update_button = tk.Button(root, text="Actualizar Resultados", command=update_result_label)
-    update_button.pack(pady=10)
+    except ValueError:
+        messagebox.showerror("Error", "Ingresa valores numéricos válidos para la edad y el nivel de glucosa.")
 
-    # Ejecutar el bucle principal de Tkinter
-    root.mainloop()
+# Crear una ventana principal de Tkinter
+root = tk.Tk()
+root.title("Sistema Experto para Detectar Diabetes")
 
-if __name__ == "__main__":
-    main()
+# Etiqueta y entrada para la edad
+age_label = tk.Label(root, text="Edad:")
+age_label.pack()
+
+age_entry = tk.Entry(root)
+age_entry.pack()
+
+# Etiqueta y entrada para el nivel de glucosa
+glucose_label = tk.Label(root, text="Nivel de Glucosa:")
+glucose_label.pack()
+
+glucose_entry = tk.Entry(root)
+glucose_entry.pack()
+
+# Botón para ejecutar el sistema experto
+submit_button = tk.Button(root, text="Detectar Diabetes", command=on_submit)
+submit_button.pack(pady=10)
+
+# Ejecutar el bucle principal de Tkinter
+root.mainloop()
