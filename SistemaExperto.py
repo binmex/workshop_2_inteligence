@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import messagebox
 import clips
@@ -13,7 +14,7 @@ class SistemaExpertoClipsGUI:
         # Cargar reglas en el motor Clips
         self.env.load("reglas.clp")
 
-        self.pregunta_label = tk.Label(master, text="¿Te gusta estar activo al aire libre?")
+        self.pregunta_label = tk.Label(master, text="¿su glucosa es mayor a 127?")
         self.pregunta_label.pack()
 
         self.si_button = tk.Button(master, text="Sí", command=self.respuesta_si)
@@ -40,10 +41,9 @@ class SistemaExpertoClipsGUI:
             if fact.template.name == 'recomendacion':
                 respuesta = fact[0]  # Acceder al primer elemento de la tupla
                 break
-        messagebox.showinfo("Recomendación", f"Te recomendamos hacer {respuesta}")
+        messagebox.showinfo("Recomendación", f"%diabetes  {respuesta}")
+
 
 root = tk.Tk()
 app = SistemaExpertoClipsGUI(root)
 root.mainloop()
-
-
