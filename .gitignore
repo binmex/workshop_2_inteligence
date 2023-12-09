@@ -1,0 +1,5 @@
+# Ignorar la carpeta virtualenv
+venv/
+
+# Ignorar la carpeta .idea
+.idea/
