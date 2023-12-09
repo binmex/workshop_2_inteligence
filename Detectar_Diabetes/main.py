@@ -5,7 +5,7 @@ import clips
 class SistemaExpertoClipsGUI:
     def __init__(self, master):
         self.master = master
-        master.title("Sistema Experto con Clips")
+        master.title("Sistema Experto Daibetes")
 
         # Crear el entorno Clips
         self.env = clips.Environment()
