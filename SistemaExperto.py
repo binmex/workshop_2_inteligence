@@ -43,6 +43,7 @@ class SistemaExpertoClipsGUI:
                 break
         messagebox.showinfo("Recomendación", f"%diabetes  {respuesta}")
 
+
 root = tk.Tk()
 app = SistemaExpertoClipsGUI(root)
 root.mainloop()
