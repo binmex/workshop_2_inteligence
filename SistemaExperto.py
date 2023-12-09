@@ -1,16 +1,17 @@
 import tkinter as tk
 from tkinter import messagebox
-from clipspy import ClipsEngine
+import clips
 
 class SistemaExpertoClipsGUI:
     def __init__(self, master):
         self.master = master
         master.title("Sistema Experto con Clips")
 
-        self.engine = ClipsEngine()
+        # Crear el entorno Clips
+        self.env = clips.Environment()
 
         # Cargar reglas en el motor Clips
-        self.engine.load("reglas.clp")
+        self.env.load("reglas.clp")
 
         self.pregunta_label = tk.Label(master, text="¿Te gusta estar activo al aire libre?")
         self.pregunta_label.pack()
@@ -23,20 +24,26 @@ class SistemaExpertoClipsGUI:
 
     def respuesta_si(self):
         # Definir hechos en Clips según la respuesta
-        self.engine.assert_string("(respuesta si)")
+        self.env.assert_string("(respuesta si)")
         self.realizar_inferencia()
 
     def respuesta_no(self):
         # Definir hechos en Clips según la respuesta
-        self.engine.assert_string("(respuesta no)")
+        self.env.assert_string("(respuesta no)")
         self.realizar_inferencia()
 
     def realizar_inferencia(self):
         # Ejecutar el motor Clips y obtener la respuesta
-        self.engine.run()
-        respuesta = self.engine.get_fact("(recomendacion ?actividad)")
+        self.env.run()
+        facts = self.env.facts()
+        for fact in facts:
+            if fact.template.name == 'recomendacion':
+                respuesta = fact[0]  # Acceder al primer elemento de la tupla
+                break
         messagebox.showinfo("Recomendación", f"Te recomendamos hacer {respuesta}")
 
 root = tk.Tk()
 app = SistemaExpertoClipsGUI(root)
 root.mainloop()
+
+
